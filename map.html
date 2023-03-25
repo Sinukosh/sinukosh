@@ -892,7 +892,7 @@
 
         function navigateToLocal(){
             getLocation();
-            setInterval(() => {
+            setTimeout(() => {
                 map.setView(window.myLocation, 15);
             }, 5000);
             // alert('there');
