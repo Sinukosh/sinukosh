@@ -240,7 +240,7 @@
     //.addTo(map);
 
 
-  if (window.location.protocol === "http:" || window.location.protocol === "https:") {
+  if (window.location.protocol === "http:") {
     console.log("Served from HTTP/HTTPS server");
     L.tileLayer("http://localhost:3000/tiles/{z}/{x}/{y}.png", {
       maxZoom: 19
