@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Bhuvan Cadastral Map (Leaflet)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Leaflet CSS -->
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+
+
+    .side-label-style {
+      font-size: 8px;
+      padding: 2px 2px;
+    }
+
+    /* Hide the little arrow tip */
+    .side-label-style::before {
+      display: none;
+    }
+
+
+    .my-custom-pin {
+      color: black;
+      font-size: 12px;
+      /* background-color: white;
+      border: black; */
+
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    #locateBtn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      z-index: 1000;
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #infoPopup {
+      position: absolute;
+      top: 60px;
+      right: 15px;
+      z-index: 1000;
+      background: white;
+      padding: 12px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      display: none;
+      min-width: 240px;
+    }
+
+    #beepBtn {
+      margin-top: 10px;
+      width: 100%;
+      padding: 8px;
+      border: none;
+      background: green;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      display: none;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div id="map"></div>
+  <button id="locateBtn">Find My Location</button>
+
+  <div id="infoPopup">
+    <div><strong>Latitude:</strong> <span id="lat">-</span></div>
+    <div><strong>Longitude:</strong> <span id="lng">-</span></div>
+    <div><strong>Accuracy (m):</strong> <span id="acc">-</span></div>
+    <div><strong>Status:</strong> <span id="status">Idle</span></div>
+
+    <button id="beepBtn">🔔 Beep & Lock</button>
+  </div>
+
+  <!-- Leaflet JS -->
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+
+
+  <script>
+    L.RotateImageLayer = L.ImageOverlay.extend({
+      options: { rotation: 0 },
+      _animateZoom: function (e) {
+        L.ImageOverlay.prototype._animateZoom.call(this, e);
+        this._image.style[L.DomUtil.TRANSFORM] += ' rotate(' + this.options.rotation + 'deg)';
+      },
+      _reset: function () {
+        L.ImageOverlay.prototype._reset.call(this);
+        this._image.style[L.DomUtil.TRANSFORM] += ' rotate(' + this.options.rotation + 'deg)';
+      }
+    });
+    // Factory function for cleaner usage
+    L.rotateImageLayer = function (url, bounds, options) {
+      return new L.RotateImageLayer(url, bounds, options);
+    };
+    // Initialize map
+    var map = L.map('map', {
+      center: [9.99443708102795, 76.29317541154536], // India center
+      zoom: 18
+    });
+
+    function labelPolygonSides(polygon, map, options = {}) {
+      // getLatLngs() returns an array; [0] handles simple polygons
+      const latlngs = polygon.getLatLngs()[0];
+      const tooltips = [];
+
+      latlngs.forEach((p1, i) => {
+        // Get the next vertex, wrapping back to the first one at the end
+        const p2 = latlngs[(i + 1) % latlngs.length];
+
+        // 1. Calculate Midpoint
+        const midLat = (p1.lat + p2.lat) / 2;
+        const midLng = (p1.lng + p2.lng) / 2;
+
+        // 2. Define Content (default to "Side #", or use a custom callback)
+        const content = options.getContent
+          ? options.getContent(p1, p2, i)
+          : `Side ${i + 1}`;
+
+
+        // 3. Create and Add Tooltip
+        const tt = L.tooltip({
+          permanent: true,
+          direction: 'center',
+          className: 'side-label-style'
+        })
+          .setLatLng([midLat, midLng])
+          .setContent(content)
+          .addTo(map);
+
+        tooltips.push(tt);
+      });
+
+      return tooltips; // Return array so you can remove them later if needed
+    }
+
+
+    function getBoundsFromCenter(map, center, imgWidth, imgHeight, targetZoom) {
+      // Project the center LatLng to a pixel point at the target zoom level
+      var centerPoint = map.project(center, targetZoom);
+
+      // Calculate the pixel coordinates of the corners
+      var swPoint = L.point(centerPoint.x - imgWidth / 2, centerPoint.y + imgHeight / 2);
+      var nePoint = L.point(centerPoint.x + imgWidth / 2, centerPoint.y - imgHeight / 2);
+
+      // Unproject pixel points back to LatLng coordinates
+      var sw = map.unproject(swPoint, targetZoom);
+      var ne = map.unproject(nePoint, targetZoom);
+
+      return L.latLngBounds(sw, ne);
+    }
+
+    function addImage(map) {
+      // Usage example:
+
+      var center = [9.99422327, 76.29309386];
+
+      var circle = L.circle(center, {
+        color: 'red',       // Stroke color
+        fillColor: '#0f3',  // Fill color
+        fillOpacity: 1,   // Opacity level
+        radius: .5         // Radius in meters
+      }).addTo(map);
+
+      var bounds = getBoundsFromCenter(map, center, 1024, 1024, 19);
+      // L.imageOverlay('./sketchline.png', bounds).addTo(map);
+
+      L.rotateImageLayer('./sketchline.png', bounds, { rotation: -8 }).addTo(map);
+    }
+
+    function addMarker(point, map) {
+      // L.marker([point.Lat, point.Lng]).addTo(map)
+      //   .bindPopup(`${point.id ?? ''} (${point.Lat}, ${point.Lng})`)
+      //   .openPopup();
+      var circle = L.circle([point.Lat, point.Lng], {
+        color: 'red',       // Stroke color
+        fillColor: '#0f3',  // Fill color
+        fillOpacity: 1,   // Opacity level
+        radius: .05         // Radius in meters
+      }).addTo(map);
+
+
+      var myIcon = L.divIcon({
+        className: 'my-custom-pin', // Custom CSS class for styling
+        html: `(${point.Lat}, ${point.Lng})`,     // HTML to inject inside the div
+        iconSize: [30, 30],         // Size in pixels [width, height]
+        iconAnchor: [15, 30]        // The point of the icon which will correspond to marker's location
+      });
+
+      L.marker([point.Lat, point.Lng], { icon: myIcon }).addTo(map);
+    }
+
+    // Base layer (OpenStreetMap)
+    var osm = L.tileLayer(
+      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      {
+        // attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 25,
+        maxNativeZoom: 19 // Tiles are only available up to level 19
+
+      }
+    ).addTo(map);
+
+    // Define Esri Satellite Layer
+    var esriSatellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+      maxZoom: 25,
+      maxNativeZoom: 19 // Tiles are only available up to level 19
+    })
+    //.addTo(map);
+
+
+  if (window.location.protocol === "http:" || window.location.protocol === "https:") {
+    console.log("Served from HTTP/HTTPS server");
+    L.tileLayer("http://localhost:3000/tiles/{z}/{x}/{y}.png", {
+      maxZoom: 19
+    }).addTo(map);
+
+  } else {
+    console.log("NOT served from HTTP/HTTPS (likely file://)");
+    // Bhuvan WMS Layer
+    var bhuvanCadastral = L.tileLayer.wms(
+      "https://bhuvan-vec1.nrsc.gov.in/bhuvan/gwc/service/wms/",
+      {
+        layers: "cadastral:cadastral_india",
+        format: "image/png",
+        transparent: true,
+        version: "1.1.1",
+        attribution: "NRSC Bhuvan",
+        maxZoom: 25,
+        maxNativeZoom: 19 // Tiles are only available up to level 19
+      }
+    ).addTo(map);
+
+  }    
+    let points217 = [
+      { id: "1", Lat: 9.99476631, Lng: 76.29296059 },
+      { id: "2", Lat: 9.99485117, Lng: 76.29317483 },
+      { id: "3", Lat: 9.99493405, Lng: 76.29321435 },
+      { id: "4", Lat: 9.99502010, Lng: 76.29341958 },
+      { id: "5", Lat: 9.99456353, Lng: 76.29360683 },
+      { id: "6", Lat: 9.99437182, Lng: 76.29372715 },
+      { id: "7", Lat: 9.99450637, Lng: 76.29403318 },
+      { id: "8", Lat: 9.99428263, Lng: 76.29408707 },
+      { id: "9", Lat: 9.99402153, Lng: 76.29428350 },
+      { id: "10", Lat: 9.99381330, Lng: 76.29431732 },
+      { id: "11", Lat: 9.99347143, Lng: 76.29344045 },
+      { id: "12", Lat: 9.99402916, Lng: 76.29320676 },
+      { id: "13", Lat: 9.99419257, Lng: 76.29314616 },
+      { id: "14", Lat: 9.99460538, Lng: 76.29305555 }];
+
+
+    let points228 = [{ id: "15", Lat: 9.99388487, Lng: 76.29243006 },
+    { id: "16", Lat: 9.99420185, Lng: 76.29232298 },
+    { id: "17", Lat: 9.99494519, Lng: 76.29221389 },
+    { id: "18", Lat: 9.99514177, Lng: 76.29212575 },
+    { id: "20", Lat: 9.99555319, Lng: 76.29274207 },
+    { id: "21", Lat: 9.99517104, Lng: 76.29275439 },
+    { id: "1", Lat: 9.99476631, Lng: 76.29296059 },
+    { id: "14", Lat: 9.99460538, Lng: 76.29305555 },
+    { id: "13", Lat: 9.99419257, Lng: 76.29314616 },
+    { id: "12", Lat: 9.99402916, Lng: 76.29320676 },
+    ];
+    let pointshouse = [
+      { id: "A", Lat: 9.99457418, Lng: 76.29326862 },
+      { id: "B", Lat: 9.99443228, Lng: 76.29332285 },
+      { id: "C", Lat: 9.99434202, Lng: 76.29311339 },
+      { id: "D", Lat: 9.99450893, Lng: 76.29307676 }
+
+    ]
+    points217.forEach(point => {
+      addMarker(point, map);
+      // L.marker([point.Lat, point.Lng]).addTo(map)
+      //   .bindPopup(`${point.id ?? ''} (${point.Lat}, ${point.Lng})`)
+      //   .openPopup();
+    });
+
+    points228.forEach(point => {
+      // L.marker([point.Lat, point.Lng]).addTo(map)
+      //   .bindPopup(`${point.id ?? ''} (${point.Lat}, ${point.Lng})`)
+      //   .openPopup();
+      addMarker(point, map);
+    });
+
+    pointshouse.forEach(point => {
+      // L.marker([point.Lat, point.Lng]).addTo(map)
+      //   .bindPopup(`${point.id ?? ''} (${point.Lat}, ${point.Lng})`)
+      //   .openPopup();
+      addMarker(point, map);
+    });
+
+    // addImage(map);
+
+
+
+    var polygon217 = L.polygon([points217.map(point => {
+      return [point.Lat, point.Lng]
+    })]).addTo(map);
+
+    labelPolygonSides(polygon217, map, {
+      getContent: (p1, p2) => {
+        const distance = p1.distanceTo(p2).toFixed(2);
+        return `${distance} m`;
+      }
+    });
+
+
+
+    var polygon228 = L.polygon([points228.map(point => {
+      return [point.Lat, point.Lng]
+    })], { color: 'red' }).addTo(map);
+
+    labelPolygonSides(polygon228, map, {
+      getContent: (p1, p2) => {
+        const distance = p1.distanceTo(p2).toFixed(2);
+        return `${distance} m`;
+      }
+    });
+
+    var polygonhouse = L.polygon([pointshouse.map(point => {
+      return [point.Lat, point.Lng]
+    })], { color: 'green' }).addTo(map);
+    labelPolygonSides(polygonhouse, map, {
+      getContent: (p1, p2) => {
+        const distance = p1.distanceTo(p2).toFixed(2);
+        return `${distance} m`;
+      }
+    });
+
+
+    var area217 = L.GeometryUtil.geodesicArea(polygonhouse.getLatLngs()[0]);
+
+    var meter = (area217).toFixed(6);
+    polygonhouse.bindPopup("Area: " + meter + " m², Cents: " + meter * 0.0247 + " Expected: 10.374");
+
+
+    // Layer control
+    var baseMaps = {
+      "OpenStreetMap": osm
+    };
+
+    // var overlayMaps = {
+    //   "Bhuvan Cadastral": bhuvanCadastral
+    // };
+
+    // L.control.layers(baseMaps, overlayMaps).addTo(map);
+
+    // Optional: click to show coordinates
+    map.on('click', function (e) {
+      alert(e.latlng.lat.toFixed(8) + ", " + e.latlng.lng.toFixed(8));
+    });
+
+    let watchId = null;
+    let locked = false;
+    let stableCount = 0;
+    let lastAcc = Infinity;
+
+    // 🔵 Blue dot + accuracy circle
+    let locationMarker = null;
+    let accuracyCircle = null;
+
+    const locateBtn = document.getElementById("locateBtn");
+    const popup = document.getElementById("infoPopup");
+    const beepBtn = document.getElementById("beepBtn");
+    const statusEl = document.getElementById("status");
+
+    locateBtn.onclick = () => {
+      popup.style.display = "block";
+      beepBtn.style.display = "none";
+
+      if (watchId) navigator.geolocation.clearWatch(watchId);
+
+      startTracking();
+    };
+
+    function startTracking() {
+      locked = false;
+      stableCount = 0;
+      lastAcc = Infinity;
+      statusEl.innerText = "Getting initial fix...";
+
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          updateUI(pos);
+          statusEl.innerText = "Switching to high accuracy...";
+          startHighAccuracyWatch();
+        },
+        err => alert(err.message),
+        {
+          enableHighAccuracy: false,
+          timeout: 5000,
+          maximumAge: 60000
+        }
+      );
+    }
+
+    function startHighAccuracyWatch() {
+      if (watchId) navigator.geolocation.clearWatch(watchId);
+
+      watchId = navigator.geolocation.watchPosition(
+        pos => {
+          if (locked) return;
+
+          const acc = pos.coords.accuracy;
+
+          if (acc > 100) return;
+
+          updateUI(pos);
+
+          if (Math.abs(acc - lastAcc) < 1) {
+            stableCount++;
+          } else {
+            stableCount = 0;
+          }
+
+          lastAcc = acc;
+
+          if (acc <= 5 && stableCount >= 3) {
+            statusEl.innerText = "High accuracy stable ✔";
+            beepBtn.style.display = "block";
+          } else {
+            statusEl.innerText = "Improving accuracy...";
+          }
+        },
+        err => console.warn(err),
+        {
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 0
+        }
+      );
+    }
+
+    function updateUI(position) {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      const acc = position.coords.accuracy;
+
+      document.getElementById("lat").innerText = lat.toFixed(6);
+      document.getElementById("lng").innerText = lng.toFixed(6);
+      document.getElementById("acc").innerText = acc.toFixed(2);
+
+      const latlng = [lat, lng];
+
+      map.setView(latlng, 18);
+
+      // 🔵 Create or update blue dot
+      if (!locationMarker) {
+        locationMarker = L.circleMarker(latlng, {
+          radius: 8,
+          color: "#fff",
+          weight: 2,
+          fillColor: "#007bff",
+          fillOpacity: 1
+        }).addTo(map);
+      } else {
+        locationMarker.setLatLng(latlng);
+      }
+
+      // 🔵 Create or update accuracy circle
+      if (!accuracyCircle) {
+        accuracyCircle = L.circle(latlng, {
+          radius: acc,
+          color: "#007bff",
+          fillColor: "#007bff",
+          fillOpacity: 0.2
+        }).addTo(map);
+      } else {
+        accuracyCircle.setLatLng(latlng);
+        accuracyCircle.setRadius(acc);
+      }
+    }
+
+    beepBtn.onclick = () => {
+      locked = true;
+
+      if (watchId) navigator.geolocation.clearWatch(watchId);
+
+      statusEl.innerText = "Locked 🔒";
+
+      // 🔔 Beep
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioCtx.createOscillator();
+
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(1000, audioCtx.currentTime);
+
+      oscillator.connect(audioCtx.destination);
+      oscillator.start();
+
+      setTimeout(() => oscillator.stop(), 300);
+    };    
+  </script>
+
+</body>
+
+</html>
