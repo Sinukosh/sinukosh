@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Bhuvan Cadastral Map (Leaflet)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Leaflet CSS -->
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+
+
+    .side-label-style {
+      font-size: 8px;
+      padding: 2px 2px;
+    }
+
+    /* Hide the little arrow tip */
+    .side-label-style::before {
+      display: none;
+    }
+
+
+    .my-custom-pin {
+      color: black;
+      font-size: 12px;
+      /* background-color: white;
+      border: black; */
+
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    #locateBtn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      z-index: 1000;
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #infoPopup {
+      position: absolute;
+      top: 60px;
+      right: 15px;
+      z-index: 1000;
+      background: white;
+      padding: 12px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      display: none;
+      min-width: 240px;
+    }
+
+    #beepBtn {
+      margin-top: 10px;
+      width: 100%;
+      padding: 8px;
+      border: none;
+      background: green;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      display: none;
+    }
+
+    /* Side Panel Styles */
+    #overlayPanel {
+      position: fixed;
+      left: -350px;
+      top: 0;
+      width: 330px;
+      height: 100vh;
+      background: white;
+      box-shadow: 2px 0 15px rgba(0, 0, 0, 0.2);
+      z-index: 999;
+      overflow-y: auto;
+      transition: left 0.3s ease;
+      padding: 10px;
+    }
+
+    #overlayPanel.open {
+      left: 0;
+    }
+
+    #togglePanelBtn {
+      position: fixed;
+      left: 10px;
+      top: 15px;
+      z-index: 998;
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .panel-header {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #28a745;
+    }
+
+    .overlay-section {
+      margin-bottom: 20px;
+      padding: 12px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border-left: 4px solid #28a745;
+    }
+
+    .overlay-title {
+      font-weight: bold;
+      margin-bottom: 12px;
+      color: #333;
+    }
+
+    .control-group {
+      margin-bottom: 12px;
+    }
+
+    .control-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #555;
+    }
+
+    .control-group input[type="number"],
+    .control-group input[type="range"],
+    .control-group input[type="text"] {
+      width: 100%;
+      padding: 6px 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 12px;
+      box-sizing: border-box;
+    }
+
+    .control-group input[type="range"] {
+      padding: 4px;
+    }
+
+    .range-value {
+      display: inline-block;
+      float: right;
+      background: #28a745;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    .toggle-visibility {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toggle-visibility input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .toggle-visibility label {
+      margin: 0;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .coord-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .coord-inputs input {
+      width: 100%;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 8px;
+      margin-top: 15px;
+    }
+
+    .button-group button {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .btn-export {
+      background: #007bff;
+      color: white;
+    }
+
+    .btn-reset {
+      background: #dc3545;
+      color: white;
+    }
+
+    .btn-export:hover {
+      background: #0056b3;
+    }
+
+    .btn-reset:hover {
+      background: #c82333;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div id="map"></div>
+  <button id="locateBtn">Find My Location</button>
+  <button id="togglePanelBtn">⚙️ Config</button>
+
+  <div id="infoPopup">
+    <div><strong>Latitude:</strong> <span id="lat">-</span></div>
+    <div><strong>Longitude:</strong> <span id="lng">-</span></div>
+    <div><strong>Accuracy (m):</strong> <span id="acc">-</span></div>
+    <div><strong>Status:</strong> <span id="status">Idle</span></div>
+
+    <button id="beepBtn">🔔 Beep & Lock</button>
+  </div>
+
+  <!-- Overlay Configuration Panel -->
+  <div id="overlayPanel">
+    <div class="panel-header">🗺️ Overlay Config</div>
+    <div id="panelContent"></div>
+  </div>
+
+  <!-- Leaflet JS -->
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+
+
+  <script>
+    L.RotateImageLayer = L.ImageOverlay.extend({
+      options: { rotation: 0 },
+      _animateZoom: function (e) {
+        L.ImageOverlay.prototype._animateZoom.call(this, e);
+        this._image.style[L.DomUtil.TRANSFORM] += ' rotate(' + this.options.rotation + 'deg)';
+      },
+      _reset: function () {
+        L.ImageOverlay.prototype._reset.call(this);
+        this._image.style[L.DomUtil.TRANSFORM] += ' rotate(' + this.options.rotation + 'deg)';
+      }
+    });
+    // Factory function for cleaner usage
+    L.rotateImageLayer = function (url, bounds, options) {
+      return new L.RotateImageLayer(url, bounds, options);
+    };
+    // Initialize map
+    var map = L.map('map', {
+      center: [9.26157089, 76.74760222], // India center
+      zoom: 19
+    });
+
+    function labelPolygonSides(polygon, map, options = {}) {
+      // getLatLngs() returns an array; [0] handles simple polygons
+      const latlngs = polygon.getLatLngs()[0];
+      const tooltips = [];
+
+      latlngs.forEach((p1, i) => {
+        // Get the next vertex, wrapping back to the first one at the end
+        const p2 = latlngs[(i + 1) % latlngs.length];
+
+        // 1. Calculate Midpoint
+        const midLat = (p1.lat + p2.lat) / 2;
+        const midLng = (p1.lng + p2.lng) / 2;
+
+        // 2. Define Content (default to "Side #", or use a custom callback)
+        const content = options.getContent
+          ? options.getContent(p1, p2, i)
+          : `Side ${i + 1}`;
+
+
+        // 3. Create and Add Tooltip
+        const tt = L.tooltip({
+          permanent: true,
+          direction: 'center',
+          className: 'side-label-style'
+        })
+          .setLatLng([midLat, midLng])
+          .setContent(content)
+          .addTo(map);
+
+        tooltips.push(tt);
+      });
+
+      return tooltips; // Return array so you can remove them later if needed
+    }
+
+
+    function getBoundsFromCenter(map, center, imgWidth, imgHeight, targetZoom) {
+      // Project the center LatLng to a pixel point at the target zoom level
+      var centerPoint = map.project(center, targetZoom);
+
+      // Calculate the pixel coordinates of the corners
+      var swPoint = L.point(centerPoint.x - imgWidth / 2, centerPoint.y + imgHeight / 2);
+      var nePoint = L.point(centerPoint.x + imgWidth / 2, centerPoint.y - imgHeight / 2);
+
+      // Unproject pixel points back to LatLng coordinates
+      var sw = map.unproject(swPoint, targetZoom);
+      var ne = map.unproject(nePoint, targetZoom);
+
+      return L.latLngBounds(sw, ne);
+    }
+
+    function addImage(map) {
+      // Usage example:
+
+      var center = [9.99422327, 76.29309386];
+
+      var circle = L.circle(center, {
+        color: 'red',       // Stroke color
+        fillColor: '#0f3',  // Fill color
+        fillOpacity: 1,   // Opacity level
+        radius: .5         // Radius in meters
+      }).addTo(map);
+
+      var bounds = getBoundsFromCenter(map, center, 1024, 1024, 19);
+      // L.imageOverlay('./sketchline.png', bounds).addTo(map);
+
+      L.rotateImageLayer('./sketchline.png', bounds, { rotation: -8 }).addTo(map);
+    }
+
+    function addMarker(point, map) {
+      // L.marker([point.Lat, point.Lng]).addTo(map)
+      //   .bindPopup(`${point.id ?? ''} (${point.Lat}, ${point.Lng})`)
+      //   .openPopup();
+      var circle = L.circle([point.Lat, point.Lng], {
+        color: 'red',       // Stroke color
+        fillColor: '#0f3',  // Fill color
+        fillOpacity: 1,   // Opacity level
+        radius: .05         // Radius in meters
+      }).addTo(map);
+
+
+      var myIcon = L.divIcon({
+        className: 'my-custom-pin', // Custom CSS class for styling
+        html: `(${point.Lat}, ${point.Lng})`,     // HTML to inject inside the div
+        iconSize: [30, 30],         // Size in pixels [width, height]
+        iconAnchor: [15, 30]        // The point of the icon which will correspond to marker's location
+      });
+
+      L.marker([point.Lat, point.Lng], { icon: myIcon }).addTo(map);
+    }
+
+    // Base layer (OpenStreetMap)
+    var osm = L.tileLayer(
+      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      {
+        // attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 25,
+        maxNativeZoom: 19 // Tiles are only available up to level 19
+
+      }
+    ).addTo(map);
+
+    // Define Esri Satellite Layer
+    var esriSatellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+      maxZoom: 25,
+      maxNativeZoom: 19 // Tiles are only available up to level 19
+    })
+    //.addTo(map);
+
+
+    if (window.location.protocol === "http:") {
+      console.log("Served from HTTP/HTTPS server");
+      L.tileLayer("http://localhost:3000/tiles/{z}/{x}/{y}.png", {
+        maxZoom: 19
+      }).addTo(map);
+
+    } else {
+      console.log("NOT served from HTTP/HTTPS (likely file://)");
+      // Bhuvan WMS Layer
+      var bhuvanCadastral = L.tileLayer.wms(
+        "https://bhuvan-vec1.nrsc.gov.in/bhuvan/gwc/service/wms/",
+        {
+          layers: "cadastral:cadastral_india",
+          format: "image/png",
+          transparent: true,
+          version: "1.1.1",
+          attribution: "NRSC Bhuvan",
+          maxZoom: 25,
+          maxNativeZoom: 19 // Tiles are only available up to level 19
+        }
+      ).addTo(map);
+
+    }
+    let points217 = [
+      { id: "1", Lat: 9.99476631, Lng: 76.29296059 },
+      { id: "2", Lat: 9.99485117, Lng: 76.29317483 },
+      { id: "3", Lat: 9.99493405, Lng: 76.29321435 },
+      { id: "4", Lat: 9.99502010, Lng: 76.29341958 },
+      { id: "5", Lat: 9.99456353, Lng: 76.29360683 },
+      { id: "6", Lat: 9.99437182, Lng: 76.29372715 },
+      { id: "7", Lat: 9.99450637, Lng: 76.29403318 },
+      { id: "8", Lat: 9.99428263, Lng: 76.29408707 },
+      { id: "9", Lat: 9.99402153, Lng: 76.29428350 },
+      { id: "10", Lat: 9.99381330, Lng: 76.29431732 },
+      { id: "11", Lat: 9.99347143, Lng: 76.29344045 },
+      { id: "12", Lat: 9.99402916, Lng: 76.29320676 },
+      { id: "13", Lat: 9.99419257, Lng: 76.29314616 },
+      { id: "14", Lat: 9.99460538, Lng: 76.29305555 }];
+
+
+    let points228 = [{ id: "15", Lat: 9.99388487, Lng: 76.29243006 },
+    { id: "16", Lat: 9.99420185, Lng: 76.29232298 },
+    { id: "17", Lat: 9.99494519, Lng: 76.29221389 },
+    { id: "18", Lat: 9.99514177, Lng: 76.29212575 },
+    { id: "20", Lat: 9.99555319, Lng: 76.29274207 },
+    { id: "21", Lat: 9.99517104, Lng: 76.29275439 },
+    { id: "1", Lat: 9.99476631, Lng: 76.29296059 },
+    { id: "14", Lat: 9.99460538, Lng: 76.29305555 },
+    { id: "13", Lat: 9.99419257, Lng: 76.29314616 },
+    { id: "12", Lat: 9.99402916, Lng: 76.29320676 },
+    ];
+    let pointshouse = [
+      { id: "A", Lat: 9.99457418, Lng: 76.29326862 },
+      { id: "B", Lat: 9.99443228, Lng: 76.29332285 },
+      { id: "C", Lat: 9.99434202, Lng: 76.29311339 },
+      { id: "D", Lat: 9.99450893, Lng: 76.29307676 }
+
+    ]
+    points217.forEach(point => {
+      addMarker(point, map);
+      // L.marker([point.Lat, point.Lng]).addTo(map)
+      //   .bindPopup(`${point.id ?? ''} (${point.Lat}, ${point.Lng})`)
+      //   .openPopup();
+    });
+
+    points228.forEach(point => {
+      // L.marker([point.Lat, point.Lng]).addTo(map)
+      //   .bindPopup(`${point.id ?? ''} (${point.Lat}, ${point.Lng})`)
+      //   .openPopup();
+      addMarker(point, map);
+    });
+
+    pointshouse.forEach(point => {
+      // L.marker([point.Lat, point.Lng]).addTo(map)
+      //   .bindPopup(`${point.id ?? ''} (${point.Lat}, ${point.Lng})`)
+      //   .openPopup();
+      addMarker(point, map);
+    });
+
+    // addImage(map);
+
+
+
+    var polygon217 = L.polygon([points217.map(point => {
+      return [point.Lat, point.Lng]
+    })]).addTo(map);
+
+    labelPolygonSides(polygon217, map, {
+      getContent: (p1, p2) => {
+        const distance = p1.distanceTo(p2).toFixed(2);
+        return `${distance} m`;
+      }
+    });
+
+
+
+    var polygon228 = L.polygon([points228.map(point => {
+      return [point.Lat, point.Lng]
+    })], { color: 'red' }).addTo(map);
+
+    labelPolygonSides(polygon228, map, {
+      getContent: (p1, p2) => {
+        const distance = p1.distanceTo(p2).toFixed(2);
+        return `${distance} m`;
+      }
+    });
+
+    var polygonhouse = L.polygon([pointshouse.map(point => {
+      return [point.Lat, point.Lng]
+    })], { color: 'green' }).addTo(map);
+    labelPolygonSides(polygonhouse, map, {
+      getContent: (p1, p2) => {
+        const distance = p1.distanceTo(p2).toFixed(2);
+        return `${distance} m`;
+      }
+    });
+
+
+    var area217 = L.GeometryUtil.geodesicArea(polygonhouse.getLatLngs()[0]);
+
+    var meter = (area217).toFixed(6);
+    polygonhouse.bindPopup("Area: " + meter + " m², Cents: " + meter * 0.0247 + " Expected: 10.374");
+
+    // Optional: click to show coordinates
+    map.on('click', function (e) {
+      alert(e.latlng.lat.toFixed(8) + ", " + e.latlng.lng.toFixed(8));
+    });
+
+    let watchId = null;
+    let locked = false;
+    let stableCount = 0;
+    let lastAcc = Infinity;
+
+    // 🔵 Blue dot + accuracy circle
+    let locationMarker = null;
+    let accuracyCircle = null;
+
+    const locateBtn = document.getElementById("locateBtn");
+    const popup = document.getElementById("infoPopup");
+    const beepBtn = document.getElementById("beepBtn");
+    const statusEl = document.getElementById("status");
+
+    locateBtn.onclick = () => {
+      popup.style.display = "block";
+      beepBtn.style.display = "none";
+
+      if (watchId) navigator.geolocation.clearWatch(watchId);
+
+      startTracking();
+    };
+
+    function startTracking() {
+      locked = false;
+      stableCount = 0;
+      lastAcc = Infinity;
+      statusEl.innerText = "Getting initial fix...";
+
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          updateUI(pos);
+          statusEl.innerText = "Switching to high accuracy...";
+          startHighAccuracyWatch();
+        },
+        err => alert(err.message),
+        {
+          enableHighAccuracy: false,
+          timeout: 5000,
+          maximumAge: 60000
+        }
+      );
+    }
+
+    function startHighAccuracyWatch() {
+      if (watchId) navigator.geolocation.clearWatch(watchId);
+
+      watchId = navigator.geolocation.watchPosition(
+        pos => {
+          if (locked) return;
+
+          const acc = pos.coords.accuracy;
+
+          if (acc > 100) return;
+
+          updateUI(pos);
+
+          if (Math.abs(acc - lastAcc) < 1) {
+            stableCount++;
+          } else {
+            stableCount = 0;
+          }
+
+          lastAcc = acc;
+
+          if (acc <= 5 && stableCount >= 3) {
+            statusEl.innerText = "High accuracy stable ✔";
+            beepBtn.style.display = "block";
+          } else {
+            statusEl.innerText = "Improving accuracy...";
+          }
+        },
+        err => console.warn(err),
+        {
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 0
+        }
+      );
+    }
+
+    function updateUI(position) {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      const acc = position.coords.accuracy;
+
+      document.getElementById("lat").innerText = lat.toFixed(6);
+      document.getElementById("lng").innerText = lng.toFixed(6);
+      document.getElementById("acc").innerText = acc.toFixed(2);
+
+      const latlng = [lat, lng];
+
+      map.setView(latlng, 18);
+
+      // 🔵 Create or update blue dot
+      if (!locationMarker) {
+        locationMarker = L.circleMarker(latlng, {
+          radius: 8,
+          color: "#fff",
+          weight: 2,
+          fillColor: "#007bff",
+          fillOpacity: 1
+        }).addTo(map);
+      } else {
+        locationMarker.setLatLng(latlng);
+      }
+
+      // 🔵 Create or update accuracy circle
+      if (!accuracyCircle) {
+        accuracyCircle = L.circle(latlng, {
+          radius: acc,
+          color: "#007bff",
+          fillColor: "#007bff",
+          fillOpacity: 0.2
+        }).addTo(map);
+      } else {
+        accuracyCircle.setLatLng(latlng);
+        accuracyCircle.setRadius(acc);
+      }
+    }
+
+    beepBtn.onclick = () => {
+      locked = true;
+
+      if (watchId) navigator.geolocation.clearWatch(watchId);
+
+      statusEl.innerText = "Locked 🔒";
+
+      // 🔔 Beep
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioCtx.createOscillator();
+
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(1000, audioCtx.currentTime);
+
+      oscillator.connect(audioCtx.destination);
+      oscillator.start();
+
+      setTimeout(() => oscillator.stop(), 300);
+    };
+
+    // Image Overlays Configuration
+    const imageOverlaysConfig = {
+        "imageOverlays": [
+          {
+            "id": "overlay_tannimoottil",
+            "title": "Tannimoottil Sketch",
+            "imageUrl": "./sketches/65.svg",
+            "center": {
+              "latitude": 9.26037914,
+              "longitude": 76.74895088
+            },
+            "rotationDegree": -22,
+            "imageWidth": 1114,
+            "imageHeight": 1114,
+            "zoomLevel": 19,
+            "zoomLevels": {
+              "minZoom": 16,
+              "maxZoom": 20,
+              "optimalZoom": 19
+            },
+            "opacity": 0.65,
+            "isVisible": true,
+            "description": "Tannimoottil property sketch",
+            "aspectRatio": 1
+          },
+          {
+          "id": "overlay_tannimoottil",
+          "title": "8",
+          "imageUrl": "./sketches/8.svg",
+          "center": {
+            "latitude": 9.25899545,
+            "longitude": 76.74229921
+          },
+          "rotationDegree": -37,
+          "imageWidth": 624,
+          "imageHeight": 624,
+          "zoomLevel": 19,
+          "zoomLevels": {
+            "minZoom": 16,
+            "maxZoom": 20,
+            "optimalZoom": 19
+          },
+          "opacity": 0.65,
+          "isVisible": true,
+          "description": "Tannimoottil property sketch",
+          "aspectRatio": 1
+        },
+        {
+          "id": "overlay_tannimoottil",
+          "title": "12",
+          "imageUrl": "./sketches/12.svg",
+          "center": {
+            "latitude": 9.25975615,
+            "longitude": 76.74226419
+          },
+          "rotationDegree": -33,
+          "imageWidth": 1346,
+          "imageHeight": 1346,
+          "zoomLevel": 19,
+          "zoomLevels": {
+            "minZoom": 16,
+            "maxZoom": 20,
+            "optimalZoom": 19
+          },
+          "opacity": 0.65,
+          "isVisible": true,
+          "description": "Tannimoottil property sketch",
+          "aspectRatio": 1
+        },
+        {
+          "id": "overlay_tannimoottil",
+          "title": "13",
+          "imageUrl": "./sketches/13.svg",
+          "center": {
+            "latitude": 9.25978191,
+            "longitude": 76.74522118
+          },
+          "rotationDegree": 43,
+          "imageWidth": 726,
+          "imageHeight": 726,
+          "zoomLevel": 19,
+          "zoomLevels": {
+            "minZoom": 16,
+            "maxZoom": 20,
+            "optimalZoom": 19
+          },
+          "opacity": 0.65,
+          "isVisible": true,
+          "description": "Tannimoottil property sketch",
+          "aspectRatio": 1
+        }  ,
+        {
+          "id": "overlay_tannimoottil",
+          "title": "14",
+          "imageUrl": "./sketches/14.svg",
+          "center": {
+            "latitude": 9.25932952,
+            "longitude": 76.7438681
+          },
+          "rotationDegree": 38,
+          "imageWidth": 802,
+          "imageHeight": 802,
+          "zoomLevel": 19,
+          "zoomLevels": {
+            "minZoom": 16,
+            "maxZoom": 20,
+            "optimalZoom": 19
+          },
+          "opacity": 0.65,
+          "isVisible": true,
+          "description": "Tannimoottil property sketch",
+          "aspectRatio": 1
+        }        
+
+        ]
+      };
+
+    // Function to load all image overlays
+    function loadImageOverlays(config) {
+      const overlayLayers = {};
+
+      config.imageOverlays.forEach(overlay => {
+        const center = [overlay.center.latitude, overlay.center.longitude];
+        console.log(center);
+
+        const bounds = getBoundsFromCenter(map, center, overlay.imageWidth, overlay.imageHeight, overlay.zoomLevel);
+
+        const layer = L.rotateImageLayer(overlay.imageUrl, bounds, {
+          rotation: overlay.rotationDegree,
+          opacity: overlay.opacity
+        });
+
+        if (overlay.isVisible) {
+          layer.addTo(map);
+        }
+
+        overlayLayers[overlay.title] = layer;
+      });
+
+      return overlayLayers;
+    }
+
+    // Load all overlays
+    const overlayLayers = loadImageOverlays(imageOverlaysConfig);
+
+    // Add layer control with overlays
+    const baseMaps = {
+      "OpenStreetMap": osm
+    };
+
+    const overlayMaps = overlayLayers;
+
+    L.control.layers(baseMaps, overlayMaps).addTo(map);
+
+    // ===== OVERLAY CONFIGURATION PANEL =====
+    const togglePanelBtn = document.getElementById("togglePanelBtn");
+    const overlayPanel = document.getElementById("overlayPanel");
+    const panelContent = document.getElementById("panelContent");
+
+    let currentLayerMap = {}; // Maps overlay IDs to Leaflet layers for updates
+
+    // Store layer references for later updates
+    imageOverlaysConfig.imageOverlays.forEach((overlay, index) => {
+      currentLayerMap[overlay.id] = overlayLayers[overlay.title];
+    });
+
+    // Toggle panel visibility
+    togglePanelBtn.onclick = () => {
+      overlayPanel.classList.toggle("open");
+    };
+
+    // Build panel UI
+    function buildPanelUI() {
+      let html = "";
+
+      imageOverlaysConfig.imageOverlays.forEach((overlay) => {
+        const lat = overlay.center.latitude;
+        const lng = overlay.center.longitude;
+        const rot = overlay.rotationDegree;
+        const opac = overlay.opacity;
+        overlay.aspectRatio = overlay.imageWidth / overlay.imageHeight;
+        
+        html += `
+          <div class="overlay-section">
+            <div class="overlay-title">${overlay.title}</div>
+            
+            <!-- Coordinates -->
+            <div class="control-group">
+              <label>📍 Latitude</label>
+              <input type="number" step="0.00001" value="${lat}" class="coord-lat" data-id="${overlay.id}" placeholder="Latitude">
+            </div>
+            
+            <div class="control-group">
+              <label>📍 Longitude</label>
+              <input type="number" step="0.00001" value="${lng}" class="coord-lng" data-id="${overlay.id}" placeholder="Longitude">
+            </div>
+
+            <!-- Rotation -->
+            <div class="control-group">
+              <label>🔄 Rotation <span class="range-value">${rot}°</span></label>
+              <input type="range" min="-360" max="360" value="${rot}" class="rotation-slider" data-id="${overlay.id}">
+            </div>
+
+            <!-- Opacity -->
+            <div class="control-group">
+              <label>👁️ Opacity <span class="range-value">${(opac * 100).toFixed(0)}%</span></label>
+              <input type="range" min="0" max="1" step="0.01" value="${opac}" class="opacity-slider" data-id="${overlay.id}">
+            </div>
+
+            <!-- Visibility Toggle -->
+            <div class="control-group toggle-visibility">
+              <input type="checkbox" id="visible-${overlay.id}" class="visibility-toggle" data-id="${overlay.id}" ${overlay.isVisible ? 'checked' : ''}>
+              <label for="visible-${overlay.id}">Visible</label>
+            </div>
+
+            <!-- Image Width -->
+            <div class="control-group">
+              <label>📏 Image Width (px)</label>
+              <input
+                type="number"
+                min="1"
+                value="${overlay.imageWidth}"
+                class="image-width"
+                data-id="${overlay.id}">
+            </div>
+
+            <!-- Image Height -->
+            <div class="control-group">
+              <label>📐 Image Height (px)</label>
+              <input
+                type="number"
+                min="1"
+                value="${overlay.imageHeight}"
+                class="image-height"
+                data-id="${overlay.id}">
+            </div>            
+          </div>
+        `;
+      });
+
+      html += `
+        <div class="button-group">
+          <button class="btn-export" onclick="exportConfig()">📥 Export JSON</button>
+          <button class="btn-reset" onclick="resetConfig()">🔄 Reset</button>
+        </div>
+      `;
+
+      panelContent.innerHTML = html;
+      attachPanelListeners();
+    }
+
+    // Attach event listeners to panel controls
+    function attachPanelListeners() {
+      // Latitude inputs
+      document.querySelectorAll(".coord-lat").forEach(input => {
+        input.addEventListener("change", updateOverlayCoordinates);
+        input.addEventListener("input", updateOverlayCoordinates);
+      });
+
+      // Longitude inputs
+      document.querySelectorAll(".coord-lng").forEach(input => {
+        input.addEventListener("change", updateOverlayCoordinates);
+        input.addEventListener("input", updateOverlayCoordinates);
+      });
+
+      // Rotation sliders
+      document.querySelectorAll(".rotation-slider").forEach(slider => {
+        slider.addEventListener("input", (e) => {
+          const valueDisplay = e.target.parentElement.querySelector(".range-value");
+          valueDisplay.textContent = e.target.value + "°";
+          updateOverlayRotation(e);
+        });
+      });
+
+      // Opacity sliders
+      document.querySelectorAll(".opacity-slider").forEach(slider => {
+        slider.addEventListener("input", (e) => {
+          const valueDisplay = e.target.parentElement.querySelector(".range-value");
+          valueDisplay.textContent = (e.target.value * 100).toFixed(0) + "%";
+          updateOverlayOpacity(e);
+        });
+      });
+
+      // Visibility toggles
+      document.querySelectorAll(".visibility-toggle").forEach(checkbox => {
+        checkbox.addEventListener("change", updateOverlayVisibility);
+      });
+
+      // Image Width
+      document.querySelectorAll(".image-width").forEach(input => {
+        input.addEventListener("input", updateOverlayDimensions);
+      });
+
+      // Image Height
+      document.querySelectorAll(".image-height").forEach(input => {
+        input.addEventListener("input", updateOverlayDimensions);
+      });      
+    }
+
+  function updateOverlayDimensions(e) {
+      const overlayId = e.target.dataset.id;
+      const overlay = imageOverlaysConfig.imageOverlays.find(
+        o => o.id === overlayId
+      );
+
+      if (!overlay) return;
+
+      if (e.target.classList.contains("image-width")) {
+        overlay.imageWidth = parseInt(e.target.value) || 1;
+        overlay.imageHeight = Math.round(
+          overlay.imageWidth / overlay.aspectRatio
+        );
+
+        const heightInput = document.querySelector(
+          `.image-height[data-id="${overlayId}"]`
+        );
+        if (heightInput) {
+          heightInput.value = overlay.imageHeight;
+        }
+      }
+
+      if (e.target.classList.contains("image-height")) {
+        overlay.imageHeight = parseInt(e.target.value) || 1;
+        overlay.imageWidth = Math.round(
+          overlay.imageHeight * overlay.aspectRatio
+        );
+
+        const widthInput = document.querySelector(
+          `.image-width[data-id="${overlayId}"]`
+        );
+        if (widthInput) {
+          widthInput.value = overlay.imageWidth;
+        }
+      }
+
+      rebuildOverlay(overlayId);
+    }    
+
+    // Update overlay coordinates and rebuild layer
+    function updateOverlayCoordinates(e) {
+      const overlayId = e.target.dataset.id;
+      const overlay = imageOverlaysConfig.imageOverlays.find(o => o.id === overlayId);
+      if (!overlay) return;
+
+      if (e.target.classList.contains("coord-lat")) {
+        overlay.center.latitude = parseFloat(e.target.value);
+      } else {
+        overlay.center.longitude = parseFloat(e.target.value);
+      }
+
+      rebuildOverlay(overlayId);
+    }
+
+    // Update overlay rotation
+    function updateOverlayRotation(e) {
+      const overlayId = e.target.dataset.id;
+      const overlay = imageOverlaysConfig.imageOverlays.find(o => o.id === overlayId);
+      if (!overlay) return;
+
+      overlay.rotationDegree = parseInt(e.target.value);
+      rebuildOverlay(overlayId);
+    }
+
+    // Update overlay opacity
+    function updateOverlayOpacity(e) {
+      const overlayId = e.target.dataset.id;
+      const overlay = imageOverlaysConfig.imageOverlays.find(o => o.id === overlayId);
+      if (!overlay) return;
+
+      overlay.opacity = parseFloat(e.target.value);
+      rebuildOverlay(overlayId);
+    }
+
+    // Toggle overlay visibility
+    function updateOverlayVisibility(e) {
+      const overlayId = e.target.dataset.id;
+      const overlay = imageOverlaysConfig.imageOverlays.find(o => o.id === overlayId);
+      const layer = currentLayerMap[overlayId];
+
+      if (!overlay || !layer) return;
+
+      overlay.isVisible = e.target.checked;
+      if (e.target.checked) {
+        layer.addTo(map);
+      } else {
+        map.removeLayer(layer);
+      }
+    }
+
+    // Rebuild overlay on the map
+    function rebuildOverlay(overlayId) {
+      const overlay = imageOverlaysConfig.imageOverlays.find(o => o.id === overlayId);
+      const layer = currentLayerMap[overlayId];
+
+      if (!overlay || !layer) return;
+
+      // Remove old layer
+      map.removeLayer(layer);
+
+      // Create new layer with updated properties
+      const center = [overlay.center.latitude, overlay.center.longitude];
+      const bounds = getBoundsFromCenter(map, center, overlay.imageWidth, overlay.imageHeight, overlay.zoomLevel);
+
+      const newLayer = L.rotateImageLayer(overlay.imageUrl, bounds, {
+        rotation: overlay.rotationDegree,
+        opacity: overlay.opacity
+      });
+
+      if (overlay.isVisible) {
+        newLayer.addTo(map);
+      }
+
+      currentLayerMap[overlayId] = newLayer;
+    }
+
+    // Export configuration as JSON
+    window.exportConfig = function () {
+      const configStr = JSON.stringify(imageOverlaysConfig, null, 2);
+      const blob = new Blob([configStr], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "overlayConfig.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    };
+
+    // Reset configuration to defaults
+    window.resetConfig = function () {
+      if (confirm("Reset all overlay settings to defaults?")) {
+        location.reload();
+      }
+    };
+
+    // Initialize panel UI
+    buildPanelUI();
+  </script>
+
+</body>
+
+</html>
