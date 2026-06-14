@@ -20,6 +20,12 @@
     }
 
 
+    .survey-number-label {
+      font-size: 20px;
+      color:green;
+      background-color: yellow;
+      padding: 2px 2px;
+    }
     .side-label-style {
       font-size: 8px;
       padding: 2px 2px;
@@ -287,7 +293,8 @@
     };
     // Initialize map
     var map = L.map('map', {
-      center: [9.26157089, 76.74760222], // India center
+      //xxx
+      center: [9.25964766, 76.74325705], // India center
       zoom: 19
     });
 
@@ -310,6 +317,7 @@
           : `Side ${i + 1}`;
 
 
+          //aaa
         // 3. Create and Add Tooltip
         const tt = L.tooltip({
           permanent: true,
@@ -365,7 +373,7 @@
       //   .bindPopup(`${point.id ?? ''} (${point.Lat}, ${point.Lng})`)
       //   .openPopup();
       var circle = L.circle([point.Lat, point.Lng], {
-        color: 'red',       // Stroke color
+        color: 'blue',       // Stroke color
         fillColor: '#0f3',  // Fill color
         fillOpacity: 1,   // Opacity level
         radius: .05         // Radius in meters
@@ -374,7 +382,7 @@
 
       var myIcon = L.divIcon({
         className: 'my-custom-pin', // Custom CSS class for styling
-        html: `(${point.Lat}, ${point.Lng})`,     // HTML to inject inside the div
+        html: `${point.id ?? ''} (${point.Lat}, ${point.Lng})`,     // HTML to inject inside the div
         iconSize: [30, 30],         // Size in pixels [width, height]
         iconAnchor: [15, 30]        // The point of the icon which will correspond to marker's location
       });
@@ -460,6 +468,9 @@
       { id: "D", Lat: 9.99450893, Lng: 76.29307676 }
 
     ]
+
+
+
     points217.forEach(point => {
       addMarker(point, map);
       // L.marker([point.Lat, point.Lng]).addTo(map)
@@ -480,6 +491,152 @@
       //   .openPopup();
       addMarker(point, map);
     });
+    let points14x1 = [
+      { id: "14x1A", Lat: 9.25950603, Lng: 76.74348738 },
+      { id: "14x1B", Lat: 9.25939783, Lng: 76.74340960 },
+      { id: "14x1C", Lat: 9.25950570, Lng: 76.74327213 },
+      { id: "14x1G", Lat: 9.25957023, Lng: 76.74335327 },
+      { id: "14x1H", Lat: 9.25954442, Lng: 76.74338780 }
+    ];
+
+    let points14x20 = [
+      { id: "14x20A", Lat: 9.25939783, Lng: 76.74340960 },
+      { id: "14x20B", Lat: 9.25950570, Lng: 76.74327213 },
+      { id: "14x20E", Lat: 9.25938029, Lng: 76.74310684 },
+      { id: "14x20F", Lat: 9.25922609, Lng: 76.74325135 },
+      { id: "14x20G", Lat: 9.25921153, Lng: 76.74327280 },
+      { id: "14x20H", Lat: 9.25921219, Lng: 76.74327649 },
+      { id: "14x20I", Lat: 9.25922774, Lng: 76.74328052 },
+
+    ];
+    let points14x3 = [
+      { id: "14x3A", Lat: 9.25949346, Lng: 76.74359769 },
+      { id: "14x3B", Lat: 9.25940610, Lng: 76.74376063 },
+      { id: "14x3C", Lat: 9.25918572, Lng: 76.74371503 },
+      { id: "14x3D", Lat: 9.25916520, Lng: 76.74361244 },
+      { id: "14x3E", Lat: 9.25917579, Lng: 76.74340792 },
+    ];
+
+    let points14x2 = [
+      { id: "14x2A", Lat: 9.25950603, Lng: 76.74348738 },
+      { id: "14x2B", Lat: 9.25949346, Lng: 76.74359769 },
+      { id: "14x2C", Lat: 9.25917579, Lng: 76.74340792 },
+      { id: "14x2D", Lat: 9.25921219, Lng: 76.74327649 },
+      { id: "14x2E", Lat: 9.25922774, Lng: 76.74328052 }
+    ];
+
+    let points14x8 = [
+      { id: "14x8A", Lat: 9.25922542, Lng: 76.74325034 },
+      { id: "14x8B", Lat: 9.25920921, Lng: 76.74327532 },
+      { id: "14x8C", Lat: 9.25919680, Lng: 76.74333085 },
+      { id: "14x8D", Lat: 9.25907585, Lng: 76.74336433 },
+      { id: "14x8E", Lat: 9.25896533, Lng: 76.74313970 },
+      { id: "14x8F", Lat: 9.25911424, Lng: 76.74306795 },
+    ];
+
+    let points8x2 = [
+      { id: "8x2A", Lat: 9.25935977, Lng: 76.74198836 },
+      { id: "8x2B", Lat: 9.25961788, Lng: 76.74238332 },
+      { id: "8x2C", Lat: 9.25945044, Lng: 76.74248457 },
+      { id: "8x2D", Lat: 9.25917380, Lng: 76.74212046 },
+    ];
+    let points8x8 = [
+      { id: "8x8A", Lat: 9.25958413, Lng: 76.74245507 },
+      { id: "8x8B", Lat: 9.25940742, Lng: 76.74257040 },
+      { id: "8x8C", Lat: 9.25931477, Lng: 76.74268171 },
+      { id: "8x8D", Lat: 9.25931477, Lng: 76.74268171 },
+      { id: "8x8E", Lat: 9.25950339, Lng: 76.74295396 },
+      { id: "8x8F", Lat: 9.25944250, Lng: 76.74298748 },
+      { id: "8x8G", Lat: 9.25950537, Lng: 76.74308941 },
+      { id: "8x8H", Lat: 9.25942174, Lng: 76.74315705 },
+      { id: "8x8J", Lat: 9.25961325, Lng: 76.74341194 },
+      { id: "8x8K", Lat: 9.25973899, Lng: 76.74321681 },
+      { id: "8x8L", Lat: 9.25980981, Lng: 76.74313836 },
+      { id: "8x8M", Lat: 9.25994945, Lng: 76.74297474 },
+    ];
+    let points8x10 = [
+      { id: "8x10A", Lat: 9.25923403, Lng: 76.74278967 },
+      { id: "8x10B", Lat: 9.25940610, Lng: 76.74300157 },
+      { id: "8x10C", Lat: 9.25936143, Lng: 76.74302302 },
+      { id: "8x10D", Lat: 9.25920756, Lng: 76.74282622 },
+    ];
+    let points8x7 = [
+      { id: "8x7A", Lat: 9.25984554, Lng: 76.74230084 },
+      { id: "8x7B", Lat: 9.26013740, Lng: 76.74270652 },
+      { id: "8x7C", Lat: 9.26009968, Lng: 76.74273804 },
+      { id: "8x7D", Lat: 9.26018903, Lng: 76.74277358 },
+      { id: "8x7E", Lat: 9.25994945, Lng: 76.74297474 },
+      { id: "8x7F", Lat: 9.25958413, Lng: 76.74245507 },
+    ];
+
+    let points9x12 = [
+      { id: "9x12A", Lat: 9.26046434, Lng: 76.74213991 },
+      { id: "9x12B", Lat: 9.26056957, Lng: 76.74237728 },
+      { id: "9x12C", Lat: 9.26056957, Lng: 76.74237728 },
+      { id: "9x12D", Lat: 9.26031312, Lng: 76.74245942 },
+      { id: "9x12E", Lat: 9.26022245, Lng: 76.74228139 },
+    ];
+
+
+    let points12x9 = [
+      { id: "12x9A", Lat: 9.26097195, Lng: 76.74243830 },
+      { id: "12x9B", Lat: 9.26097195, Lng: 76.74243830 },
+      { id: "12x9C", Lat: 9.26117513, Lng: 76.74297675 },
+      { id: "12x9D", Lat: 9.26081642, Lng: 76.74312092 },
+      { id: "12x9E", Lat: 9.26047427, Lng: 76.74328789 },
+      { id: "12x9F", Lat: 9.26037102, Lng: 76.74334086 },
+      { id: "12x9G", Lat: 9.26017910, Lng: 76.74344815 },
+      { id: "12x9G", Lat: 9.26013410, Lng: 76.74350783 },
+      { id: "12x9H", Lat: 9.26000570, Lng: 76.74333282 },
+      { id: "12x9I", Lat: 9.25992232, Lng: 76.74327247 },
+      { id: "12x9J", Lat: 9.25973899, Lng: 76.74321681 },
+      { id: "12x9L", Lat: 9.25980981, Lng: 76.74313836 },
+      { id: "12x9M", Lat: 9.25994945, Lng: 76.74297474 },
+      { id: "12x9N", Lat: 9.26018903, Lng: 76.74277358 },
+      { id: "12x9O", Lat: 9.26020954, Lng: 76.74266562 },
+      { id: "12x9P", Lat: 9.26067480, Lng: 76.74249262 },
+    ];
+
+    let points13x1 = [
+      { id: "13x1A", Lat: 9.26033727, Lng: 76.74405769 },
+      { id: "13x1B", Lat: 9.26027308, Lng: 76.74409926 },
+      { id: "13x1C", Lat: 9.26020888, Lng: 76.74402013 },
+      { id: "13x1D", Lat: 9.26027175, Lng: 76.74397118 },
+    ];
+
+    let points13x5 = [
+      { id: "13x5A", Lat: 9.26001563, Lng: 76.74363188 },
+      { id: "13x5B", Lat: 9.25976944, Lng: 76.74376566 },
+      { id: "13x5C", Lat: 9.25959008, Lng: 76.74346793 },
+      { id: "13x5D", Lat: 9.25963178, Lng: 76.74338847 },
+      { id: "13x5E", Lat: 9.25984224, Lng: 76.74345955 },
+      
+    ];
+
+//yyy
+
+
+
+
+
+    plotPoints(points14x1);
+    plotPoints(points14x20);
+    plotPoints(points14x3);
+    plotPoints(points14x2);
+
+    plotPoints(points8x2);
+    plotPoints(points8x8);
+    plotPoints(points8x7);
+    plotPoints(points8x10);
+
+    plotPoints(points9x12);
+    
+    plotPoints(points12x9);
+
+    plotPoints(points13x1);
+    plotPoints(points13x5);
+    plotPoints(points14x8);
+    markSurveyNumbers();
 
     // addImage(map);
 
@@ -527,7 +684,9 @@
 
     // Optional: click to show coordinates
     map.on('click', function (e) {
-      alert(e.latlng.lat.toFixed(8) + ", " + e.latlng.lng.toFixed(8));
+      //{ id: "", Lat: 9.99476631, Lng: 76.29296059 },
+      alert(`{ id: "", Lat: ${e.latlng.lat.toFixed(8) }, Lng: ${e.latlng.lng.toFixed(8) } },`);
+      // alert(e.latlng.lat.toFixed(8) + ", " + e.latlng.lng.toFixed(8));
     });
 
     let watchId = null;
@@ -552,6 +711,54 @@
 
       startTracking();
     };
+
+
+    async function markSurveyNumbers () {
+      const surveyNumbers = [
+        { number: "9x12", lat: 9.26039485, lng: 76.74227871 },
+        { number: "8x2", lat: 9.25939419, lng: 76.74219489 },
+        { number: "8x7", lat: 9.25989915, lng: 76.74261734 },
+        { number: "8x8", lat: 9.25965428, lng: 76.74283057 },
+        { number: "8x10", lat: 9.25929624, lng: 76.74288958 },
+        { number: "14x8", lat: 9.25910961, lng: 76.74319938 },
+        { number: "14x20", lat: 9.25938294, lng: 76.74324229 },
+        { number: "14x1", lat: 9.25949975, lng: 76.74336970 },
+        { number: "14x2", lat: 9.25936639, lng: 76.74343742 },
+        { number: "14x3", lat: 9.25932006, lng: 76.74360439 },
+        { number: "13x1", lat: 9.26028102, lng: 76.74402416 },
+        { number: "13x5", lat: 9.25979260, lng: 76.74355410 },
+        { number: "12x9", lat: 9.26056494, lng: 76.74285471 },
+
+
+      ];
+
+      surveyNumbers.forEach(survey => {
+        const tt = L.tooltip({
+          permanent: true,
+          direction: 'center',
+          className: 'survey-number-label'
+        })
+          .setLatLng([survey.lat, survey.lng])
+          .setContent(survey.number)
+          .addTo(map);
+      });
+    }
+
+    async function plotPoints(px) {
+        px.forEach(point => {
+          addMarker(point, map);
+        });
+        var polygonPx = L.polygon([px.map(point => {
+          return [point.Lat, point.Lng]
+        })]).addTo(map);
+
+        labelPolygonSides(polygonPx, map, {
+          getContent: (p1, p2) => {
+            const distance = p1.distanceTo(p2).toFixed(2);
+            return `${distance} m`;
+          }
+        });
+      }
 
     function startTracking() {
       locked = false;
@@ -671,6 +878,7 @@
       setTimeout(() => oscillator.stop(), 300);
     };
 
+    //zzz
     // Image Overlays Configuration
     const imageOverlaysConfig = {
         "imageOverlays": [
@@ -679,12 +887,78 @@
             "title": "Tannimoottil Sketch",
             "imageUrl": "./sketches/65.svg",
             "center": {
-              "latitude": 9.26037914,
-              "longitude": 76.74895088
+              "latitude": 9.26047914,
+              "longitude": 76.74902088
             },
-            "rotationDegree": -22,
-            "imageWidth": 1114,
-            "imageHeight": 1114,
+            "rotationDegree": -20,
+            "imageWidth": 1142,
+            "imageHeight": 1142,
+            "zoomLevel": 19,
+            "zoomLevels": {
+              "minZoom": 16,
+              "maxZoom": 20,
+              "optimalZoom": 19
+            },
+            "opacity": 0.65,
+            "isVisible": false,
+            "description": "Tannimoottil property sketch",
+            "aspectRatio": 1
+          },
+          {
+            "id": "overlay_8",
+            "title": "8",
+            "imageUrl": "./sketches/8.svg",
+            "center": {
+              "latitude": 9.25899545,
+              "longitude": 76.74229921
+            },
+            "rotationDegree": -37,
+            "imageWidth": 624,
+            "imageHeight": 624,
+            "zoomLevel": 19,
+            "zoomLevels": {
+              "minZoom": 16,
+              "maxZoom": 20,
+              "optimalZoom": 19
+            },
+            "opacity": 0.65,
+            "isVisible": false,
+            "description": "Tannimoottil property sketch",
+            "aspectRatio": 1
+          },
+          {
+            "id": "overlay_12A",
+            "title": "12",
+            "imageUrl": "./sketches/12.svg",
+            "center": {
+              "latitude": 9.25975615,
+              "longitude": 76.74226419
+            },
+            "rotationDegree": -33,
+            "imageWidth": 1346,
+            "imageHeight": 1346,
+            "zoomLevel": 19,
+            "zoomLevels": {
+              "minZoom": 16,
+              "maxZoom": 20,
+              "optimalZoom": 19
+            },
+            "opacity": 0.65,
+            "isVisible": false,
+            "description": "Tannimoottil property sketch",
+            "aspectRatio": 1
+          },
+          {
+            "id": "overlay_13",
+            "title": "13",
+            "imageUrl": "./sketches/13.svg",
+            "center": {
+              "latitude": 9.25982191,
+              "longitude": 76.74501118
+            },
+            "rotationDegree": 43,
+            "imageWidth": 636,
+            "imageHeight": 636,
             "zoomLevel": 19,
             "zoomLevels": {
               "minZoom": 16,
@@ -697,94 +971,71 @@
             "aspectRatio": 1
           },
           {
-          "id": "overlay_8",
-          "title": "8",
-          "imageUrl": "./sketches/8.svg",
-          "center": {
-            "latitude": 9.25899545,
-            "longitude": 76.74229921
+            "id": "overlay_14",
+            "title": "14",
+            "imageUrl": "./sketches/14.svg",
+            "center": {
+              "latitude": 9.25932952,
+              "longitude": 76.7438681
+            },
+            "rotationDegree": 38,
+            "imageWidth": 802,
+            "imageHeight": 802,
+            "zoomLevel": 19,
+            "zoomLevels": {
+              "minZoom": 16,
+              "maxZoom": 20,
+              "optimalZoom": 19
+            },
+            "opacity": 0.65,
+            "isVisible": false,
+            "description": "Tannimoottil property sketch",
+            "aspectRatio": 1
           },
-          "rotationDegree": -37,
-          "imageWidth": 624,
-          "imageHeight": 624,
-          "zoomLevel": 19,
-          "zoomLevels": {
-            "minZoom": 16,
-            "maxZoom": 20,
-            "optimalZoom": 19
+          {
+            "id": "overlay_9",
+            "title": "9",
+            "imageUrl": "./sketches/9.svg",
+            "center": {
+              "latitude": 9.25998609,
+              "longitude": 76.74177352
+            },
+            "rotationDegree": -25,
+            "imageWidth": 455,
+            "imageHeight": 455,
+            "zoomLevel": 19,
+            "zoomLevels": {
+              "minZoom": 16,
+              "maxZoom": 20,
+              "optimalZoom": 19
+            },
+            "opacity": 0.65,
+            "isVisible": false,
+            "description": "Tannimoottil property sketch",
+            "aspectRatio": 1
           },
-          "opacity": 0.65,
-          "isVisible": true,
-          "description": "Tannimoottil property sketch",
-          "aspectRatio": 1
-        },
-        {
-          "id": "overlay_12",
-          "title": "12",
-          "imageUrl": "./sketches/12.svg",
-          "center": {
-            "latitude": 9.25975615,
-            "longitude": 76.74226419
-          },
-          "rotationDegree": -33,
-          "imageWidth": 1346,
-          "imageHeight": 1346,
-          "zoomLevel": 19,
-          "zoomLevels": {
-            "minZoom": 16,
-            "maxZoom": 20,
-            "optimalZoom": 19
-          },
-          "opacity": 0.65,
-          "isVisible": true,
-          "description": "Tannimoottil property sketch",
-          "aspectRatio": 1
-        },
-        {
-          "id": "overlay_13",
-          "title": "13",
-          "imageUrl": "./sketches/13.svg",
-          "center": {
-            "latitude": 9.25978191,
-            "longitude": 76.74522118
-          },
-          "rotationDegree": 43,
-          "imageWidth": 726,
-          "imageHeight": 726,
-          "zoomLevel": 19,
-          "zoomLevels": {
-            "minZoom": 16,
-            "maxZoom": 20,
-            "optimalZoom": 19
-          },
-          "opacity": 0.65,
-          "isVisible": true,
-          "description": "Tannimoottil property sketch",
-          "aspectRatio": 1
-        }  ,
-        {
-          "id": "overlay_14",
-          "title": "14",
-          "imageUrl": "./sketches/14.svg",
-          "center": {
-            "latitude": 9.25932952,
-            "longitude": 76.7438681
-          },
-          "rotationDegree": 38,
-          "imageWidth": 802,
-          "imageHeight": 802,
-          "zoomLevel": 19,
-          "zoomLevels": {
-            "minZoom": 16,
-            "maxZoom": 20,
-            "optimalZoom": 19
-          },
-          "opacity": 0.65,
-          "isVisible": true,
-          "description": "Tannimoottil property sketch",
-          "aspectRatio": 1
-        }        
-
+          {
+            "id": "overlay_12",
+            "title": "12",
+            "imageUrl": "./sketches/12.svg",
+            "center": {
+              "latitude": 9.25990292,
+              "longitude": 76.74225638
+            },
+            "rotationDegree": -33,
+            "imageWidth": 1247,
+            "imageHeight": 1247,
+            "zoomLevel": 19,
+            "zoomLevels": {
+              "minZoom": 16,
+              "maxZoom": 20,
+              "optimalZoom": 19
+            },
+            "opacity": 0.65,
+            "isVisible": false,
+            "description": "Tannimoottil property sketch",
+            "aspectRatio": 1
+          }
         ]
       };
 
@@ -852,7 +1103,7 @@
         const rot = overlay.rotationDegree;
         const opac = overlay.opacity;
         overlay.aspectRatio = overlay.imageWidth / overlay.imageHeight;
-        
+
         html += `
           <div class="overlay-section">
             <div class="overlay-title">${overlay.title}</div>
@@ -967,10 +1218,10 @@
       // Image Height
       document.querySelectorAll(".image-height").forEach(input => {
         input.addEventListener("input", updateOverlayDimensions);
-      });      
+      });
     }
 
-  function updateOverlayDimensions(e) {
+    function updateOverlayDimensions(e) {
       const overlayId = e.target.dataset.id;
       const overlay = imageOverlaysConfig.imageOverlays.find(
         o => o.id === overlayId
@@ -1007,7 +1258,7 @@
       }
 
       rebuildOverlay(overlayId);
-    }    
+    }
 
     // Update overlay coordinates and rebuild layer
     function updateOverlayCoordinates(e) {
