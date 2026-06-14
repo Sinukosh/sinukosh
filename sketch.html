@@ -21,11 +21,12 @@
 
 
     .survey-number-label {
-      font-size: 20px;
-      color:green;
+      font-size: medium;
+      color: green;
       background-color: yellow;
       padding: 2px 2px;
     }
+
     .side-label-style {
       font-size: 8px;
       padding: 2px 2px;
@@ -301,6 +302,8 @@
     function labelPolygonSides(polygon, map, options = {}) {
       // getLatLngs() returns an array; [0] handles simple polygons
       const latlngs = polygon.getLatLngs()[0];
+
+
       const tooltips = [];
 
       latlngs.forEach((p1, i) => {
@@ -317,7 +320,7 @@
           : `Side ${i + 1}`;
 
 
-          //aaa
+        //aaa
         // 3. Create and Add Tooltip
         const tt = L.tooltip({
           permanent: true,
@@ -610,32 +613,16 @@
       { id: "13x5C", Lat: 9.25959008, Lng: 76.74346793 },
       { id: "13x5D", Lat: 9.25963178, Lng: 76.74338847 },
       { id: "13x5E", Lat: 9.25984224, Lng: 76.74345955 },
-      
+
     ];
 
-//yyy
+    //yyy
 
 
 
 
 
-    plotPoints(points14x1);
-    plotPoints(points14x20);
-    plotPoints(points14x3);
-    plotPoints(points14x2);
 
-    plotPoints(points8x2);
-    plotPoints(points8x8);
-    plotPoints(points8x7);
-    plotPoints(points8x10);
-
-    plotPoints(points9x12);
-    
-    plotPoints(points12x9);
-
-    plotPoints(points13x1);
-    plotPoints(points13x5);
-    plotPoints(points14x8);
     markSurveyNumbers();
 
     // addImage(map);
@@ -685,7 +672,7 @@
     // Optional: click to show coordinates
     map.on('click', function (e) {
       //{ id: "", Lat: 9.99476631, Lng: 76.29296059 },
-      alert(`{ id: "", Lat: ${e.latlng.lat.toFixed(8) }, Lng: ${e.latlng.lng.toFixed(8) } },`);
+      alert(`{ id: "", Lat: ${e.latlng.lat.toFixed(8)}, Lng: ${e.latlng.lng.toFixed(8)} },`);
       // alert(e.latlng.lat.toFixed(8) + ", " + e.latlng.lng.toFixed(8));
     });
 
@@ -713,52 +700,70 @@
     };
 
 
-    async function markSurveyNumbers () {
+    async function markSurveyNumbers() {
+
       const surveyNumbers = [
-        { number: "9x12", lat: 9.26039485, lng: 76.74227871 },
-        { number: "8x2", lat: 9.25939419, lng: 76.74219489 },
-        { number: "8x7", lat: 9.25989915, lng: 76.74261734 },
-        { number: "8x8", lat: 9.25965428, lng: 76.74283057 },
-        { number: "8x10", lat: 9.25929624, lng: 76.74288958 },
-        { number: "14x8", lat: 9.25910961, lng: 76.74319938 },
-        { number: "14x20", lat: 9.25938294, lng: 76.74324229 },
-        { number: "14x1", lat: 9.25949975, lng: 76.74336970 },
-        { number: "14x2", lat: 9.25936639, lng: 76.74343742 },
-        { number: "14x3", lat: 9.25932006, lng: 76.74360439 },
-        { number: "13x1", lat: 9.26028102, lng: 76.74402416 },
-        { number: "13x5", lat: 9.25979260, lng: 76.74355410 },
-        { number: "12x9", lat: 9.26056494, lng: 76.74285471 },
-
-
+        { number: "9x12", lat: 9.26039485, lng: 76.74227871, points: points9x12 },
+        { number: "8x2", lat: 9.25939419, lng: 76.74219489, points: points8x2 },
+        { number: "8x7", lat: 9.25989915, lng: 76.74261734, points: points8x7 },
+        { number: "8x8", lat: 9.25965428, lng: 76.74283057, points: points8x8 },
+        { number: "8x10", lat: 9.25929624, lng: 76.74288958, points: points8x10 },
+        { number: "14x8", lat: 9.25910961, lng: 76.74319938, points: points14x8 },
+        { number: "14x20", lat: 9.25938294, lng: 76.74324229, points: points14x20 },
+        { number: "14x1", lat: 9.25949975, lng: 76.74336970, points: points14x1 },
+        { number: "14x2", lat: 9.25936639, lng: 76.74343742, points: points14x2 },
+        { number: "14x3", lat: 9.25932006, lng: 76.74360439, points: points14x3 },
+        { number: "13x1", lat: 9.26028102, lng: 76.74402416, points: points13x1 },
+        { number: "13x5", lat: 9.25979260, lng: 76.74355410, points: points13x5 },
+        { number: "12x9", lat: 9.26056494, lng: 76.74285471, points: points12x9 },
       ];
 
+
       surveyNumbers.forEach(survey => {
-        const tt = L.tooltip({
-          permanent: true,
-          direction: 'center',
-          className: 'survey-number-label'
-        })
-          .setLatLng([survey.lat, survey.lng])
-          .setContent(survey.number)
-          .addTo(map);
+        plotPoints(survey.points, survey);
       });
     }
 
-    async function plotPoints(px) {
-        px.forEach(point => {
-          addMarker(point, map);
-        });
-        var polygonPx = L.polygon([px.map(point => {
-          return [point.Lat, point.Lng]
-        })]).addTo(map);
+    async function plotPoints(px, survey) {
+      px.forEach(point => {
+        addMarker(point, map);
+      });
+      var polygonPx = L.polygon([px.map(point => {
+        return [point.Lat, point.Lng]
+      })]).addTo(map);
+      
+      
+      labelPolygonSides(polygonPx, map, {
+        getContent: (p1, p2) => {
+          const distance = p1.distanceTo(p2).toFixed(2);
+          return `${distance} m`;
+        }
+      });
+      
+      let latlngs = polygonPx.getLatLngs()[0]; // Extract coordinates array
+      let areaInCents = L.GeometryUtil.geodesicArea(latlngs)* 0.0247105;
 
-        labelPolygonSides(polygonPx, map, {
-          getContent: (p1, p2) => {
-            const distance = p1.distanceTo(p2).toFixed(2);
-            return `${distance} m`;
-          }
-        });
+
+      let content = `${survey.number}`;
+      // 1. Get the query string from the current URL
+      const urlParams = new URLSearchParams(window.location.search);
+
+      // 2. Check if 'debug' is explicitly set to 'true'
+      if (urlParams.get('debug') === 'true') {
+        console.log("Debug mode is ACTIVE");
+        // Place your debug logic, extra logs, or Leaflet overlays here
+        content = `${survey.number}<br>Area: ${areaInCents.toFixed(2)} cents`;
       }
+      const tt = L.tooltip({
+        permanent: true,
+        direction: 'center',
+        className: 'survey-number-label'
+      })
+        .setLatLng([survey.lat, survey.lng])
+        .setContent(content)
+        .addTo(map);
+
+    }
 
     function startTracking() {
       locked = false;
@@ -881,163 +886,163 @@
     //zzz
     // Image Overlays Configuration
     const imageOverlaysConfig = {
-        "imageOverlays": [
-          {
-            "id": "overlay_65",
-            "title": "Tannimoottil Sketch",
-            "imageUrl": "./sketches/65.svg",
-            "center": {
-              "latitude": 9.26047914,
-              "longitude": 76.74902088
-            },
-            "rotationDegree": -20,
-            "imageWidth": 1142,
-            "imageHeight": 1142,
-            "zoomLevel": 19,
-            "zoomLevels": {
-              "minZoom": 16,
-              "maxZoom": 20,
-              "optimalZoom": 19
-            },
-            "opacity": 0.3,
-            "isVisible": true,
-            "description": "Tannimoottil property sketch",
-            "aspectRatio": 1
+      "imageOverlays": [
+        {
+          "id": "overlay_65",
+          "title": "Tannimoottil Sketch",
+          "imageUrl": "./sketches/65.svg",
+          "center": {
+            "latitude": 9.26047914,
+            "longitude": 76.74902088
           },
-          {
-            "id": "overlay_8",
-            "title": "8",
-            "imageUrl": "./sketches/8.svg",
-            "center": {
-              "latitude": 9.25899545,
-              "longitude": 76.74229921
-            },
-            "rotationDegree": -37,
-            "imageWidth": 624,
-            "imageHeight": 624,
-            "zoomLevel": 19,
-            "zoomLevels": {
-              "minZoom": 16,
-              "maxZoom": 20,
-              "optimalZoom": 19
-            },
-            "opacity": 0.3,
-            "isVisible": true,
-            "description": "Tannimoottil property sketch",
-            "aspectRatio": 1
+          "rotationDegree": -20,
+          "imageWidth": 1142,
+          "imageHeight": 1142,
+          "zoomLevel": 19,
+          "zoomLevels": {
+            "minZoom": 16,
+            "maxZoom": 20,
+            "optimalZoom": 19
           },
-          {
-            "id": "overlay_12A",
-            "title": "12",
-            "imageUrl": "./sketches/12.svg",
-            "center": {
-              "latitude": 9.25975615,
-              "longitude": 76.74226419
-            },
-            "rotationDegree": -33,
-            "imageWidth": 1346,
-            "imageHeight": 1346,
-            "zoomLevel": 19,
-            "zoomLevels": {
-              "minZoom": 16,
-              "maxZoom": 20,
-              "optimalZoom": 19
-            },
-            "opacity": 0.3,
-            "isVisible": false,
-            "description": "Tannimoottil property sketch",
-            "aspectRatio": 1
+          "opacity": 0.3,
+          "isVisible": true,
+          "description": "Tannimoottil property sketch",
+          "aspectRatio": 1
+        },
+        {
+          "id": "overlay_8",
+          "title": "8",
+          "imageUrl": "./sketches/8.svg",
+          "center": {
+            "latitude": 9.25899545,
+            "longitude": 76.74229921
           },
-          {
-            "id": "overlay_13",
-            "title": "13",
-            "imageUrl": "./sketches/13.svg",
-            "center": {
-              "latitude": 9.25982191,
-              "longitude": 76.74501118
-            },
-            "rotationDegree": 43,
-            "imageWidth": 636,
-            "imageHeight": 636,
-            "zoomLevel": 19,
-            "zoomLevels": {
-              "minZoom": 16,
-              "maxZoom": 20,
-              "optimalZoom": 19
-            },
-            "opacity": 0.3,
-            "isVisible": true,
-            "description": "Tannimoottil property sketch",
-            "aspectRatio": 1
+          "rotationDegree": -37,
+          "imageWidth": 624,
+          "imageHeight": 624,
+          "zoomLevel": 19,
+          "zoomLevels": {
+            "minZoom": 16,
+            "maxZoom": 20,
+            "optimalZoom": 19
           },
-          {
-            "id": "overlay_14",
-            "title": "14",
-            "imageUrl": "./sketches/14.svg",
-            "center": {
-              "latitude": 9.25932952,
-              "longitude": 76.7438681
-            },
-            "rotationDegree": 38,
-            "imageWidth": 802,
-            "imageHeight": 802,
-            "zoomLevel": 19,
-            "zoomLevels": {
-              "minZoom": 16,
-              "maxZoom": 20,
-              "optimalZoom": 19
-            },
-            "opacity": 0.3,
-            "isVisible": true,
-            "description": "Tannimoottil property sketch",
-            "aspectRatio": 1
+          "opacity": 0.3,
+          "isVisible": true,
+          "description": "Tannimoottil property sketch",
+          "aspectRatio": 1
+        },
+        {
+          "id": "overlay_12A",
+          "title": "12",
+          "imageUrl": "./sketches/12.svg",
+          "center": {
+            "latitude": 9.25975615,
+            "longitude": 76.74226419
           },
-          {
-            "id": "overlay_9",
-            "title": "9",
-            "imageUrl": "./sketches/9.svg",
-            "center": {
-              "latitude": 9.25998609,
-              "longitude": 76.74177352
-            },
-            "rotationDegree": -25,
-            "imageWidth": 455,
-            "imageHeight": 455,
-            "zoomLevel": 19,
-            "zoomLevels": {
-              "minZoom": 16,
-              "maxZoom": 20,
-              "optimalZoom": 19
-            },
-            "opacity": 0.3,
-            "isVisible": true,
-            "description": "Tannimoottil property sketch",
-            "aspectRatio": 1
+          "rotationDegree": -33,
+          "imageWidth": 1346,
+          "imageHeight": 1346,
+          "zoomLevel": 19,
+          "zoomLevels": {
+            "minZoom": 16,
+            "maxZoom": 20,
+            "optimalZoom": 19
           },
-          {
-            "id": "overlay_12",
-            "title": "12",
-            "imageUrl": "./sketches/12.svg",
-            "center": {
-              "latitude": 9.25990292,
-              "longitude": 76.74225638
-            },
-            "rotationDegree": -33,
-            "imageWidth": 1247,
-            "imageHeight": 1247,
-            "zoomLevel": 19,
-            "zoomLevels": {
-              "minZoom": 16,
-              "maxZoom": 20,
-              "optimalZoom": 19
-            },
-            "opacity": 0.3,
-            "isVisible": true,
-            "description": "Tannimoottil property sketch",
-            "aspectRatio": 1
-          }
-        ]
-      };
+          "opacity": 0.3,
+          "isVisible": false,
+          "description": "Tannimoottil property sketch",
+          "aspectRatio": 1
+        },
+        {
+          "id": "overlay_13",
+          "title": "13",
+          "imageUrl": "./sketches/13.svg",
+          "center": {
+            "latitude": 9.25982191,
+            "longitude": 76.74501118
+          },
+          "rotationDegree": 43,
+          "imageWidth": 636,
+          "imageHeight": 636,
+          "zoomLevel": 19,
+          "zoomLevels": {
+            "minZoom": 16,
+            "maxZoom": 20,
+            "optimalZoom": 19
+          },
+          "opacity": 0.3,
+          "isVisible": true,
+          "description": "Tannimoottil property sketch",
+          "aspectRatio": 1
+        },
+        {
+          "id": "overlay_14",
+          "title": "14",
+          "imageUrl": "./sketches/14.svg",
+          "center": {
+            "latitude": 9.25932952,
+            "longitude": 76.7438681
+          },
+          "rotationDegree": 38,
+          "imageWidth": 802,
+          "imageHeight": 802,
+          "zoomLevel": 19,
+          "zoomLevels": {
+            "minZoom": 16,
+            "maxZoom": 20,
+            "optimalZoom": 19
+          },
+          "opacity": 0.3,
+          "isVisible": true,
+          "description": "Tannimoottil property sketch",
+          "aspectRatio": 1
+        },
+        {
+          "id": "overlay_9",
+          "title": "9",
+          "imageUrl": "./sketches/9.svg",
+          "center": {
+            "latitude": 9.25998609,
+            "longitude": 76.74177352
+          },
+          "rotationDegree": -25,
+          "imageWidth": 455,
+          "imageHeight": 455,
+          "zoomLevel": 19,
+          "zoomLevels": {
+            "minZoom": 16,
+            "maxZoom": 20,
+            "optimalZoom": 19
+          },
+          "opacity": 0.3,
+          "isVisible": true,
+          "description": "Tannimoottil property sketch",
+          "aspectRatio": 1
+        },
+        {
+          "id": "overlay_12",
+          "title": "12",
+          "imageUrl": "./sketches/12.svg",
+          "center": {
+            "latitude": 9.25990292,
+            "longitude": 76.74225638
+          },
+          "rotationDegree": -33,
+          "imageWidth": 1247,
+          "imageHeight": 1247,
+          "zoomLevel": 19,
+          "zoomLevels": {
+            "minZoom": 16,
+            "maxZoom": 20,
+            "optimalZoom": 19
+          },
+          "opacity": 0.3,
+          "isVisible": true,
+          "description": "Tannimoottil property sketch",
+          "aspectRatio": 1
+        }
+      ]
+    };
 
     // Function to load all image overlays
     function loadImageOverlays(config) {
@@ -1045,7 +1050,7 @@
 
       config.imageOverlays.forEach(overlay => {
         const center = [overlay.center.latitude, overlay.center.longitude];
-        console.log(center);
+        // console.log(center);
 
         const bounds = getBoundsFromCenter(map, center, overlay.imageWidth, overlay.imageHeight, overlay.zoomLevel);
 
