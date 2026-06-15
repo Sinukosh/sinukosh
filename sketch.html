@@ -295,7 +295,7 @@
     // Initialize map
     var map = L.map('map', {
       //xxx
-      center: [9.25999048, 76.74291372], // India center
+      center: [9.25977870, 76.74323291], // India center
       zoom: 19
     });
 
@@ -564,20 +564,27 @@
       { id: "8x10D", Lat: 9.25920756, Lng: 76.74282622 },
     ];
     let points8x7 = [
-      { id: "8x7A", Lat: 9.25984554, Lng: 76.74230084 },
+      // { id: "8x7A", Lat: 9.25984554, Lng: 76.74230084 },
+      { id: "8x7A", Lat: 9.26003549, Lng: 76.74256101 },
       { id: "8x7B", Lat: 9.26013740, Lng: 76.74270652 },
       { id: "8x7C", Lat: 9.26009968, Lng: 76.74273804 },
       { id: "8x7D", Lat: 9.26018903, Lng: 76.74277358 },
       { id: "8x7E", Lat: 9.25994945, Lng: 76.74297474 },
-      { id: "8x7F", Lat: 9.25958413, Lng: 76.74245507 },
+      // { id: "8x7F", Lat: 9.25958413, Lng: 76.74245507 },
+      { id: "8x7F", Lat: 9.25977175, Lng: 76.74271876 },
     ];
 
     let points9x12 = [
-      { id: "9x12A", Lat: 9.26046434, Lng: 76.74213991 },
-      { id: "9x12B", Lat: 9.26056957, Lng: 76.74237728 },
-      { id: "9x12C", Lat: 9.26056957, Lng: 76.74237728 },
-      { id: "9x12D", Lat: 9.26031312, Lng: 76.74245942 },
-      { id: "9x12E", Lat: 9.26022245, Lng: 76.74228139 },
+      // { id: "9x12A", Lat: 9.26046434, Lng: 76.74213991 },
+      { id: "9x12A", Lat: 9.26049942, Lng: 76.74223546 },
+      // { id: "9x12B", Lat: 9.26056957, Lng: 76.74237728 },
+      
+      { id: "9x12B", Lat: 9.26061689, Lng: 76.74250670 },
+      // { id: "9x12C", Lat: 9.26056957, Lng: 76.74237728 },
+      // { id: "9x12D", Lat: 9.26031312, Lng: 76.74245942 },
+      { id: "9x12D", Lat: 9.26037632, Lng: 76.74259722 },
+      // { id: "9x12E", Lat: 9.26022245, Lng: 76.74228139 },
+      { id: "9x12E", Lat: 9.26026580, Lng: 76.74236923 },
     ];
 
 
@@ -608,14 +615,40 @@
     ];
 
     let points13x5 = [
-      { id: "13x5A", Lat: 9.26001563, Lng: 76.74363188 },
+      // { id: "13x5A", Lat: 9.26001563, Lng: 76.74363188 },
+      { id: "13x5A", Lat: 9.26009108, Lng: 76.74359366 },
       { id: "13x5B", Lat: 9.25976944, Lng: 76.74376566 },
       { id: "13x5C", Lat: 9.25959008, Lng: 76.74346793 },
-      { id: "13x5D", Lat: 9.25963178, Lng: 76.74338847 },
-      { id: "13x5E", Lat: 9.25984224, Lng: 76.74345955 },
+      // { id: "13x5D", Lat: 9.25963178, Lng: 76.74338847 },
+      { id: "13x5D", Lat: 9.25969399, Lng: 76.74329393 },
+      // { id: "13x5E", Lat: 9.25984224, Lng: 76.74345955 },
+      { id: "13x5E", Lat: 9.25990908, Lng: 76.74336769 },
 
     ];
 
+    let points62x1 = [
+      { id: "62x1A", Lat: 9.26274362, Lng: 76.74471885 },
+      { id: "62x1B", Lat: 9.26316188, Lng: 76.74498975 },
+      { id: "62x1C", Lat: 9.26308511, Lng: 76.74513191 },
+      { id: "62x1D", Lat: 9.26289451, Lng: 76.74531162 },
+      { id: "62x1E", Lat: 9.26289451, Lng: 76.74531162 },
+      { id: "62x1F", Lat: 9.26305599, Lng: 76.74555570 },
+      { id: "62x1G", Lat: 9.26281774, Lng: 76.74588829 },
+      { id: "62x1H", Lat: 9.26217181, Lng: 76.74498439 },
+    ];
+
+        let points62x1B = [
+            { id: "62x1A", Lat: 9.26274362, Lng: 76.74471885 },
+
+            { id: "62x1B", Lat: 9.26340807, Lng: 76.74516410 },
+            // { id: "62x1B", Lat: 9.26316188, Lng: 76.74498975 },
+            // { id: "62x1C", Lat: 9.26308511, Lng: 76.74513191 },
+            // { id: "62x1D", Lat: 9.26289451, Lng: 76.74531162 },
+            // { id: "62x1E", Lat: 9.26289451, Lng: 76.74531162 },
+            { id: "62x1F", Lat: 9.26305599, Lng: 76.74555570 },
+            { id: "62x1G", Lat: 9.26281774, Lng: 76.74588829 },
+            { id: "62x1H", Lat: 9.26217181, Lng: 76.74498439 },
+          ];
     //yyy
 
 
@@ -716,6 +749,8 @@
         { number: "13x1", lat: 9.26028102, lng: 76.74402416, points: points13x1 },
         { number: "13x5", lat: 9.25979260, lng: 76.74355410, points: points13x5 },
         { number: "12x9", lat: 9.26056494, lng: 76.74285471, points: points12x9 },
+        { number: "62x1", lat: 9.26265891, lng: 76.74518555, points: points62x1 },
+        { number: "62x1B", lat: 9.26331542, lng: 76.74531698, points: points62x1B },
       ];
 
 
@@ -886,163 +921,185 @@
     //zzz
     // Image Overlays Configuration
     const imageOverlaysConfig = {
-      "imageOverlays": [
-        {
-          "id": "overlay_65",
-          "title": "Tannimoottil Sketch",
-          "imageUrl": "./sketches/65.svg",
-          "center": {
-            "latitude": 9.26047914,
-            "longitude": 76.74902088
+        "imageOverlays": [
+          {
+            "id": "overlay_65",
+            "title": "Tannimoottil Sketch",
+            "imageUrl": "./sketches/65.svg",
+            "center": {
+              "latitude": 9.26047914,
+              "longitude": 76.74902088
+            },
+            "rotationDegree": -20,
+            "imageWidth": 1142,
+            "imageHeight": 1142,
+            "zoomLevel": 19,
+            "zoomLevels": {
+              "minZoom": 16,
+              "maxZoom": 20,
+              "optimalZoom": 19
+            },
+            "opacity": 0.3,
+            "isVisible": true,
+            "description": "Tannimoottil property sketch",
+            "aspectRatio": 1
           },
-          "rotationDegree": -20,
-          "imageWidth": 1142,
-          "imageHeight": 1142,
-          "zoomLevel": 19,
-          "zoomLevels": {
-            "minZoom": 16,
-            "maxZoom": 20,
-            "optimalZoom": 19
+          {
+            "id": "overlay_8",
+            "title": "8",
+            "imageUrl": "./sketches/8.svg",
+            "center": {
+              "latitude": 9.25899545,
+              "longitude": 76.74229921
+            },
+            "rotationDegree": -37,
+            "imageWidth": 624,
+            "imageHeight": 624,
+            "zoomLevel": 19,
+            "zoomLevels": {
+              "minZoom": 16,
+              "maxZoom": 20,
+              "optimalZoom": 19
+            },
+            "opacity": 0.3,
+            "isVisible": true,
+            "description": "Tannimoottil property sketch",
+            "aspectRatio": 1
           },
-          "opacity": 0.3,
-          "isVisible": true,
-          "description": "Tannimoottil property sketch",
-          "aspectRatio": 1
-        },
-        {
-          "id": "overlay_8",
-          "title": "8",
-          "imageUrl": "./sketches/8.svg",
-          "center": {
-            "latitude": 9.25899545,
-            "longitude": 76.74229921
+          {
+            "id": "overlay_12A",
+            "title": "12",
+            "imageUrl": "./sketches/12.svg",
+            "center": {
+              "latitude": 9.25975615,
+              "longitude": 76.74226419
+            },
+            "rotationDegree": -33,
+            "imageWidth": 1346,
+            "imageHeight": 1346,
+            "zoomLevel": 19,
+            "zoomLevels": {
+              "minZoom": 16,
+              "maxZoom": 20,
+              "optimalZoom": 19
+            },
+            "opacity": 0.3,
+            "isVisible": false,
+            "description": "Tannimoottil property sketch",
+            "aspectRatio": 1
           },
-          "rotationDegree": -37,
-          "imageWidth": 624,
-          "imageHeight": 624,
-          "zoomLevel": 19,
-          "zoomLevels": {
-            "minZoom": 16,
-            "maxZoom": 20,
-            "optimalZoom": 19
+          {
+            "id": "overlay_13",
+            "title": "13",
+            "imageUrl": "./sketches/13.svg",
+            "center": {
+              "latitude": 9.25982191,
+              "longitude": 76.74501118
+            },
+            "rotationDegree": 43,
+            "imageWidth": 636,
+            "imageHeight": 636,
+            "zoomLevel": 19,
+            "zoomLevels": {
+              "minZoom": 16,
+              "maxZoom": 20,
+              "optimalZoom": 19
+            },
+            "opacity": 0.3,
+            "isVisible": true,
+            "description": "Tannimoottil property sketch",
+            "aspectRatio": 1
           },
-          "opacity": 0.3,
-          "isVisible": true,
-          "description": "Tannimoottil property sketch",
-          "aspectRatio": 1
-        },
-        {
-          "id": "overlay_12A",
-          "title": "12",
-          "imageUrl": "./sketches/12.svg",
-          "center": {
-            "latitude": 9.25975615,
-            "longitude": 76.74226419
+          {
+            "id": "overlay_14",
+            "title": "14",
+            "imageUrl": "./sketches/14.svg",
+            "center": {
+              "latitude": 9.25932952,
+              "longitude": 76.7438681
+            },
+            "rotationDegree": 38,
+            "imageWidth": 802,
+            "imageHeight": 802,
+            "zoomLevel": 19,
+            "zoomLevels": {
+              "minZoom": 16,
+              "maxZoom": 20,
+              "optimalZoom": 19
+            },
+            "opacity": 0.3,
+            "isVisible": true,
+            "description": "Tannimoottil property sketch",
+            "aspectRatio": 1
           },
-          "rotationDegree": -33,
-          "imageWidth": 1346,
-          "imageHeight": 1346,
-          "zoomLevel": 19,
-          "zoomLevels": {
-            "minZoom": 16,
-            "maxZoom": 20,
-            "optimalZoom": 19
+          {
+            "id": "overlay_9",
+            "title": "9",
+            "imageUrl": "./sketches/9.svg",
+            "center": {
+              "latitude": 9.25993609,
+              "longitude": 76.74180352
+            },
+            "rotationDegree": -25,
+            "imageWidth": 534,
+            "imageHeight": 534,
+            "zoomLevel": 19,
+            "zoomLevels": {
+              "minZoom": 16,
+              "maxZoom": 20,
+              "optimalZoom": 19
+            },
+            "opacity": 0.3,
+            "isVisible": true,
+            "description": "Tannimoottil property sketch",
+            "aspectRatio": 1
           },
-          "opacity": 0.3,
-          "isVisible": false,
-          "description": "Tannimoottil property sketch",
-          "aspectRatio": 1
-        },
-        {
-          "id": "overlay_13",
-          "title": "13",
-          "imageUrl": "./sketches/13.svg",
-          "center": {
-            "latitude": 9.25982191,
-            "longitude": 76.74501118
+          {
+            "id": "overlay_12",
+            "title": "12",
+            "imageUrl": "./sketches/12.svg",
+            "center": {
+              "latitude": 9.25990292,
+              "longitude": 76.74225638
+            },
+            "rotationDegree": -33,
+            "imageWidth": 1247,
+            "imageHeight": 1247,
+            "zoomLevel": 19,
+            "zoomLevels": {
+              "minZoom": 16,
+              "maxZoom": 20,
+              "optimalZoom": 19
+            },
+            "opacity": 0.3,
+            "isVisible": true,
+            "description": "Tannimoottil property sketch",
+            "aspectRatio": 1
           },
-          "rotationDegree": 43,
-          "imageWidth": 636,
-          "imageHeight": 636,
-          "zoomLevel": 19,
-          "zoomLevels": {
-            "minZoom": 16,
-            "maxZoom": 20,
-            "optimalZoom": 19
-          },
-          "opacity": 0.3,
-          "isVisible": true,
-          "description": "Tannimoottil property sketch",
-          "aspectRatio": 1
-        },
-        {
-          "id": "overlay_14",
-          "title": "14",
-          "imageUrl": "./sketches/14.svg",
-          "center": {
-            "latitude": 9.25932952,
-            "longitude": 76.7438681
-          },
-          "rotationDegree": 38,
-          "imageWidth": 802,
-          "imageHeight": 802,
-          "zoomLevel": 19,
-          "zoomLevels": {
-            "minZoom": 16,
-            "maxZoom": 20,
-            "optimalZoom": 19
-          },
-          "opacity": 0.3,
-          "isVisible": true,
-          "description": "Tannimoottil property sketch",
-          "aspectRatio": 1
-        },
-        {
-          "id": "overlay_9",
-          "title": "9",
-          "imageUrl": "./sketches/9.svg",
-          "center": {
-            "latitude": 9.25998609,
-            "longitude": 76.74177352
-          },
-          "rotationDegree": -25,
-          "imageWidth": 455,
-          "imageHeight": 455,
-          "zoomLevel": 19,
-          "zoomLevels": {
-            "minZoom": 16,
-            "maxZoom": 20,
-            "optimalZoom": 19
-          },
-          "opacity": 0.3,
-          "isVisible": true,
-          "description": "Tannimoottil property sketch",
-          "aspectRatio": 1
-        },
-        {
-          "id": "overlay_12",
-          "title": "12",
-          "imageUrl": "./sketches/12.svg",
-          "center": {
-            "latitude": 9.25990292,
-            "longitude": 76.74225638
-          },
-          "rotationDegree": -33,
-          "imageWidth": 1247,
-          "imageHeight": 1247,
-          "zoomLevel": 19,
-          "zoomLevels": {
-            "minZoom": 16,
-            "maxZoom": 20,
-            "optimalZoom": 19
-          },
-          "opacity": 0.3,
-          "isVisible": true,
-          "description": "Tannimoottil property sketch",
-          "aspectRatio": 1
-        }
-      ]
-    };
+          {
+            "id": "overlay_62",
+            "title": "62",
+            "imageUrl": "./sketches/62.svg",
+            "center": {
+              "latitude": 9.26110976,
+              "longitude": 76.74507083
+            },
+            "rotationDegree": -37,
+            "imageWidth": 1095,
+            "imageHeight": 1095,
+            "zoomLevel": 19,
+            "zoomLevels": {
+              "minZoom": 16,
+              "maxZoom": 20,
+              "optimalZoom": 19
+            },
+            "opacity": 0.3,
+            "isVisible": true,
+            "description": "Tannimoottil property sketch",
+            "aspectRatio": 1
+          }
+        ]
+      };
 
     // Function to load all image overlays
     function loadImageOverlays(config) {
